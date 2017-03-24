@@ -31,11 +31,11 @@
 // title          * : string    레이어 제목
 // content        * : html      레이어 내용
 // target         * : string    덮어씌울 HTML요소의 ID
-// confirm_title    : string    확인 버튼 텍스트 
-// cancel_title     : string    취소 버튼 텍스트
+// confirm.text     : string    확인 버튼에 들어갈 문자열
+// confirm.func   * : function  확인 버튼을 클릭했을때 실행되는 함수
+// cancel.text      : string    취소 버튼에 들어갈 문자열
+// cancel.func      : function  취소 버튼을 클릭했을때 실행되는 함수 
 // onload           : function  init함수가 실행되고 난 뒤에 실행되는 함수 
-// confirm        * : function  확인 버튼을 눌렀을때 실행되는 함수    
-// cancel           : function  취소 버튼을 눌렀을때 실행되는 함수 
 // show             : function  레이어 보이기 처리 후 실행되는 함수 
 // hide             : function  레이어 숨김 처리 후 실행되는 함수 
 // css              : object    레이어 가장 바깥 부분의 CSS
@@ -54,11 +54,15 @@
         title : '레이어1번',
         content : '테스트테스트 <br/> 테스트테스트<br/>테스트',
         target : 'layer1',
-        confirm_title : '확인1',
-        cancel_title : '취소1',
         onload : function(){ console.log("[layer1] loaded") },
-        confirm : function(){ console.log('[layer1] confirmed'); },
-        cancel : function(){ console.log('[layer1] denied') },
+        confirm : {
+            text : '확인',
+            func : function(){ console.log('[layer1] confirmed'); }
+        },
+        cancel : {
+            text : '취소',
+            func : function(){ console.log('[layer2] canceled'); }
+        },
         show : function(){ console.log('[layer1] show') },
         hide : function(){ console.log('[layer1] hide') },
         css : {
