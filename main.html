@@ -11,11 +11,12 @@
     <script type='text/javascript'>
         var _ts = {
             _time : [],
-            stamp : function(){
+            stamp : function(mesg){
                 if(this._time.length < 1){ 
                     this._time.push(Date.now());
                     console.log("===================")
                     console.log("STAMP STARTED");
+                    if(mesg && mesg != ''){ console.log('MESG : ' + mesg); }
                     console.log("===================")
                 }
                 else{
@@ -24,6 +25,7 @@
                     console.log("===================")
                     console.log("COMPARISION WITH FIRST STAMP : " + (this._time[this._time.length-1] - this._time[0]));
                     console.log("COMPARISION WITH PREV STAMP : " + (this._time[this._time.length-1] - this._time[this._time.length-2]));
+                    if(mesg && mesg != ''){ console.log('MESG : ' + mesg); }
                     console.log("===================")
                 }
             }
@@ -51,6 +53,7 @@
             $(tmp).attr('id' ,_name);
             $('#items').append(tmp);
 
+            _ts.stamp('['+ _name +']layer initialize begin');
             window['__LayerMng'].init(_name , {
                 title : _name,
                 content : '일정 시간 동안 홈페이지 이용이 확인되지 않아 <br>로그아웃 처리됩니다. <br><br>로그인 상태를 유지하시겠습니까?',
@@ -77,10 +80,12 @@
                     'position' : 'fixed'
                 }
             }, function(){ 
-                console.log('callback!!'); 
-                console.log(arguments)
+                console.log('callback');
+                _ts.stamp('['+ _name +']layer init complete');
+                init();
+                $('#name').val('')
             })
-            $.when(init()).then($('#name').val(''));
+            
         }
 
         function init(){

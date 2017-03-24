@@ -86,53 +86,52 @@
     window['__LayerMng'].show('layer1');
 */
 
+// 내부용 isblank함수 추가 
+(function($){
+  $.isBlank = function(obj){
+    return(!obj || $.trim(obj) === "");
+  };
+})(jQuery);
+
 window['__LayerMng'] = {
     _url : './layer_layout.html',
     _layers : {},
-    _util : {
-        isNullOrEmpty : function(obj){
-            return !obj || typeof(obj) != 'string' || obj == '';
-        },
-        isNotFunction : function(fn){
-            return !fn || typeof(fn) != 'function';
-        }
-    },
     _mockup : { 
         _name : "",
         _ajax : {},
         _dom : {},
         _opt : {},
         _confirm : function(){ 
-            if(window['__LayerMng']._util.isNotFunction(this._opt['confirm']['func'])){
+            if(!$.isFunction(this._opt['confirm']['func'])){
                 throw '확인 버튼을 눌렀을때 실행될 함수가 없습니다'
             }
             this._opt['confirm']['func']();
             this.hide();
         },
         _cancel : function(){ 
-            if(!window['__LayerMng']._util.isNotFunction(this._opt['cancel']['func'])){
+            if($.isFunction(this._opt['cancel']['func'])){
                 this._opt['cancel']['func']();
             }
             this.hide();
         },
         _generate : function(){
-            if(window['__LayerMng']._util.isNullOrEmpty(this._opt['target'])){ throw '대상 객체의 아이디가 없습니다' }
-            if(window['__LayerMng']._util.isNullOrEmpty(this._opt['title'])){ throw '대상 객체의 아이디가 없습니다' }
-            if(window['__LayerMng']._util.isNullOrEmpty(this._opt['content'])){ throw '레이어 내용이 공백입니다' }
+            if($.isBlank(this._opt['target'])){ throw '대상 객체의 아이디가 없습니다' }
+            if($.isBlank(this._opt['title'])){ throw '대상 객체의 아이디가 없습니다' }
+            if($.isBlank(this._opt['content'])){ throw '레이어 내용이 공백입니다' }
 
             this._dom.hide();
             
             this._dom.find('[id*=_title]').text(this._opt.title);
             this._dom.find('[id*=_desc]').html(this._opt.content);
 
-            if(!window['__LayerMng']._util.isNullOrEmpty(this._opt['confirm']['text'])){
+            if(!$.isBlank(this._opt['confirm']['text'])){
                 this._dom.find('[id*=__LayerMng_confirm]').text(this._opt['confirm']['text']);
             }
-            if(!window['__LayerMng']._util.isNullOrEmpty(this._opt['cancel']['text'])){
+            if(!$.isBlank(this._opt['cancel']['text'])){
                 this._dom.find('[id*=__LayerMng_cancel]').text(this._opt['cancel']['text']);
             }
 
-            if(this._opt.css){
+            if(!$.isEmptyObject(this._opt.css)){
                 for(key in this._opt.css){ this._dom.css(key , this._opt.css[key]); }
             }
 
@@ -161,7 +160,7 @@ window['__LayerMng'] = {
                 this._dom = $(dom);
                 this._generate();
 
-                if(!window['__LayerMng']._util.isNotFunction(this._opt['onload'])){
+                if($.isFunction(this._opt['onload'])){
                     this._opt['onload']();
                 }
             })
@@ -173,7 +172,7 @@ window['__LayerMng'] = {
         },
         show : function(){ 
             if(this._dom.is(":visible")){ console.log('['+ this._name +'] 레이어는 이미 열려있습니다'); return; }
-            if(!window['__LayerMng']._util.isNotFunction(this._opt['show'])){
+            if($.isFunction(this._opt['show'])){
                 this._opt['show']();
             }
             
@@ -181,7 +180,7 @@ window['__LayerMng'] = {
         },
         hide : function(){ 
             if(!this._dom.is(":visible")){ console.log('['+ this._name +'] 레이어는 이미 닫혀있습니다'); return; }
-            if(!window['__LayerMng']._util.isNotFunction(this._opt['hide'])){
+            if($.isFunction(this._opt['hide'])){
                 this._opt['hide']();
             }
             this._dom.hide(); 
@@ -202,7 +201,7 @@ window['__LayerMng'] = {
     },
     hide : function(name) { 
         // 이름이 없으면 열림 처리되어있는 모든 레이어를 닫아버림
-        if(this._util.isNullOrEmpty(name)){ 
+        if($.isBlank(name)){ 
             for(key in this._layers){
                 if(this.getDOM(key).is(':visible')){ this._layers[key].hide(); }
             }
@@ -213,13 +212,13 @@ window['__LayerMng'] = {
         
     },
     init : function(name , opt , callback){
-        if(this._util.isNullOrEmpty(opt['title'])){     throw '레이어 제목이 없습니다.' }
-        if(this._util.isNullOrEmpty(opt['content'])){   throw '레이어 내용이 없습니다.'}
-        if(this._util.isNullOrEmpty(opt['target'])){    throw '레이어 생성 대상이 없습니다.' }
-        if(!opt['confirm']){ throw '확인 버튼 관련 객체가 없습니다.' }
-        if(this._util.isNotFunction(opt['confirm']['func'])){ throw '확인 버튼 클릭시 실행될 함수가 없습니다.' }
+        if($.isBlank(opt['title'])){     throw '레이어 제목이 없습니다.' }
+        if($.isBlank(opt['content'])){   throw '레이어 내용이 없습니다.'}
+        if($.isBlank(opt['target'])){    throw '레이어 생성 대상이 없습니다.' }
+        if($.isEmptyObject(opt['confirm'])){ throw '확인 버튼 관련 객체가 없습니다.' }
+        if(!$.isFunction(opt['confirm']['func'])){ throw '확인 버튼 클릭시 실행될 함수가 없습니다.' }
         
-        if(this._util.isNullOrEmpty(name)){ throw '레이어 이름이 없습니다.' }
+        if($.isBlank(name)){ throw '레이어 이름이 없습니다.' }
 
         // 내용을 참조하지 않고 복사함
         this._layers[name] = jQuery.extend({} , window['__LayerMng']._mockup);
@@ -227,7 +226,7 @@ window['__LayerMng'] = {
         $(document).ready(function(){
             window['__LayerMng']._layers[name]._init(opt)
             .then(function(){
-                if(callback && !window['__LayerMng']._util.isNotFunction(callback)){
+                if($.isFunction(callback)){
                     callback(this , this._ajax);
                 }
             });
