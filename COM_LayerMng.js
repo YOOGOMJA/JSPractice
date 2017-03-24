@@ -4,6 +4,7 @@
 // HISTORY      : 
 // 2017-03-24 유경수 - 레이어를 한화면에 여러개 띄울 감안하고 재 작성
 // 2017-03-24 유경수 - confirm_title , confirm 항목을 하나의 오브젝트로 바꿈
+// 2017-03-24 유경수 - html을 ajax로 가져오는 로직 삭제 , 텍스트로 html을 갖고있는다.
 
 // ###################################### 
 // 사용법 
@@ -43,7 +44,6 @@
 
 // ## 유의 사항 
 // - document가 모두 로드되고 렌더된 이후에 추가 함수가 실행되므로 비동기 처리시 주의
-// - html 파일의 url을 확인해줄 것 
 
 // 실행 예제 
 /* 
@@ -89,7 +89,7 @@
 (function($){
   $.isBlank = function(obj){
     return(!obj || $.trim(obj) === "");
-  };
+  };  
 })(jQuery);
 
 window['__LayerMng'] = {
@@ -151,25 +151,36 @@ window['__LayerMng'] = {
             // document ready 함수로 감싸야
             $("#" + this._opt.target).replaceWith(this._dom);
         },
-        _init : function(opt){
-            this._opt = opt;
-            this._ajax = $.get({
-                url : window['__LayerMng']._url,
-                context : this
-            })
-            .done(function(dom){
-                this._dom = $(dom);
-                this._generate();
+        // _init : function(opt){
+        //     this._opt = opt;
+        //     this._ajax = $.get({
+        //         url : window['__LayerMng']._url,
+        //         context : this
+        //     })
+        //     .done(function(dom){
+        //         this._dom = $(dom);
+        //         this._generate();
                 
-                if($.isFunction(this._opt['onload'])){
-                    this._opt['onload']();
-                }
-            })
-            .fail(function(){
-                throw new Error('레이아웃 html 파일의 위치를 확인해주세요 : [' + window['__LayerMng']._url + "]");
-            });
+        //         if($.isFunction(this._opt['onload'])){
+        //             this._opt['onload']();
+        //         }
+        //     })
+        //     .fail(function(){
+        //         throw new Error('레이아웃 html 파일의 위치를 확인해주세요 : [' + window['__LayerMng']._url + "]");
+        //     });
 
-            return this._ajax;
+        //     return this._ajax;
+        // },
+        _init : function(opt){
+            var self = this;
+            return $.Deferred(function(dfd){
+                self._opt = opt;
+                self._generate();
+                if($.isFunction(self._opt[onload])){
+                    self._opt['onload']()
+                }
+                dfd.resolve();
+            })
         },
         show : function(){ 
             if(this._dom.is(":visible")){ console.log('['+ this._name +'] 레이어는 이미 열려있습니다'); return; }
@@ -243,3 +254,5 @@ window['__LayerMng'] = {
     }
 }
 
+// html을 직접 텍스트로 만들어준다.
+window['__LayerMng']._mockup._dom = $('<div id="__LayerMng" class="session_1" style=" max-width:394px; height:350px; border:3px solid #42b7f6; background-color: #fff;"><h1 id="__LayerMng_title" style="width:200px; height:30px; text-align:center; margin:auto; margin-bottom:40px; margin-top:40px;color:#0cacff; font-size:2.5em; letter-spacing:-2px; padding-bottom:10px; border-bottom:1px solid #0cacff;">세션종료안내</h1><p id="__LayerMng_desc" style="font-size:1.2em; letter-spacing:-1px; text-align:center; margin-bottom:10%;">일정 시간 동안 홈페이지 이용이 확인되지 않아 <br/>로그아웃 처리됩니다. <br/><br/>로그인 상태를 유지하시겠습니까?</p><div class="session_bt" style="width:100%; height:30%;margin:auto"><div style="width:80%; height:50%; margin:auto; text-align:center "><div style="width:48%; height:52px; background-color:#d4d4d4; border-radius:60px; float:left; margin-right:4%"><a id="__LayerMng_cancel" href="#" style="width:100%; height:100%; text-align:center; line-height: 52px; margin:auto; display:block; font-size:1.1em; font-weight:bold;">취소</a></div><div style="width:48%; height:52px; background-color:#42b7f6; border-radius:60px; float:left;"><a id="__LayerMng_confirm" href="#" style="width:100%; height:100%; text-align:center; line-height: 52px; margin:auto; display:block; font-size:1.1em; font-weight:bold; color:#fff;">확인</a></div></div></div></div>')
