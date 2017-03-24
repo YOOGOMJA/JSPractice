@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset=utf-8 />
+	<title></title>
+	<!--[if IE]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+    <script type='text/javascript' src='./bower_components/jquery/dist/jquery.js'></script>
+    <script type='text/javascript'>
+        var _ts = {
+            _time : [],
+            stamp : function(){
+                if(this._time.length < 1){ 
+                    this._time.push(Date.now());
+                    console.log("===================")
+                    console.log("STAMP STARTED");
+                    console.log("===================")
+                }
+                else{
+                    this._time.push(Date.now());
+                    
+                    console.log("===================")
+                    console.log("COMPARISION WITH FIRST STAMP : " + (this._time[this._time.length-1] - this._time[0]));
+                    console.log("COMPARISION WITH PREV STAMP : " + (this._time[this._time.length-1] - this._time[this._time.length-2]));
+                    console.log("===================")
+                }
+            }
+        }
+    </script>
+    <!--<script type='text/javascript' src="./com_confirm.js"></script>-->
+    <script type='text/javascript' src="./com_layermng.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://192.168.0.14:2222/v3/inc/base.css">
+    <script type='text/javascript'>
+        (function(){
+
+            window['__LayerMng'].init('layer1' , {
+                title : '레이어1번',
+                content : '테스트테스트 <br/> 테스트테스트<br/>테스트',
+                target : 'layer1',
+                confirm_title : '확인1',
+                cancel_title : '취소1',
+                onload : function(){ console.log("[layer1] loaded") },
+                confirm : function(){ console.log('[layer1] confirmed'); },
+                cancel : function(){ console.log('[layer1] denied') },
+                show : function(){ console.log('[layer1] show') },
+                hide : function(){ console.log('[layer1] hide') },
+                css : {
+                    "width" : "394px",
+                    "height" : "350px",
+                    "border" : "3px solid #42b7f6",
+                    "top"  : '50%',
+                    'left' : '50%',
+                    'margin-top' : '-175px',
+                    'margin-left' : '-197px',
+                    'position' : 'fixed'
+                }
+            });
+
+            window['__LayerMng'].init('layer2' , {
+                title : '레이어2번',
+                content : '테스트테스트 <br/> 테스트테스트<br/>테스트',
+                target : 'layer2',
+                confirm_title : '확인2',
+                cancel_title : '취소2',
+                onload : function(){ console.log("[layer2] loaded") },
+                confirm : function(){ console.log('[layer2] confirmed'); },
+                cancel : function(){ console.log('[layer2] denied') },
+                show : function(){ console.log('[layer2] show') },
+                hide : function(){ console.log('[layer2] hide') },
+                css : {
+                    "width" : "394px",
+                    "height" : "350px",
+                    "border" : "3px solid #42b7f6",
+                    "top"  : '50%',
+                    'left' : '50%',
+                    'margin-top' : '-175px',
+                    'margin-left' : '-197px',
+                    'position' : 'fixed'
+                }
+            });
+        })();
+    </script>
+
+    <script type='text/javascript'>
+        function make(){
+            var _name = $('#name').val();
+
+            if(_name == ''){ alert('이름 없음'); return; }
+            for(var i = 0 ; i < $('#nameselect').children().length ; i++){
+                if($('#nameselect').children()[i].innerText == _name){
+                    alert('이미 존재하는 이름');
+                    $('#name').val('')
+                    return;
+                }
+            }
+
+            var tmp = document.createElement('div')
+            $(tmp).attr('id' ,_name);
+            $('#items').append(tmp);
+
+
+            window['__LayerMng'].init(_name , {
+                title : _name,
+                content : '',
+                target : _name,
+                confirm_title : '확인',
+                cancel_title : '취소',
+                onload : function(){ console.log("["+_name+"] loaded") },
+                confirm : function(){ console.log('[' + _name +'] confirmed'); },
+                cancel : function(){ console.log('[' + _name + '] denied') },
+                show : function(){ console.log('[' +_name+ '] show') },
+                hide : function(){ console.log('['+ _name +'] hide') },
+                css : {
+                    /*"width" : "394px",
+                    "height" : "350px",
+                    "border" : "3px solid #42b7f6",
+                    "top"  : '50%',
+                    'left' : '50%',
+                    'margin-top' : '-175px',
+                    'margin-left' : '-197px',
+                    'position' : 'fixed'*/
+                }
+            }, function(){ 
+                console.log('callback!!'); 
+                console.log(arguments)
+            })
+            $.when(init()).then($('#name').val(''));
+        }
+
+        function init(){
+            $('#nameselect').empty();
+            for(key in window['__LayerMng']._layers){
+                var _tmp = document.createElement('option')
+                $(_tmp).text(key);
+                $(_tmp).attr('value' , key);
+                $('#nameselect').append(_tmp);
+            }
+            
+        };
+
+        function show(){
+            window['__LayerMng'].show($('#nameselect').find(':selected').val());
+        }
+        function hide(){
+            window['__LayerMng'].hide($('#nameselect').find(':selected').val());
+        }
+
+        $(window).ready(function(){
+            init();
+        })
+        
+    </script>
+</head>
+<body style='width:1000px; height : 1000px; margin:auto;'>
+    <h1 style='margin-top:50px;'>
+       레이어 테스트 페이지
+    </h1>
+    <br/>
+    <hr>
+    <br/>
+    <div>
+        <span>
+            <h2>레이어 생성</h2>
+            <p>
+                <input id='name' type='text' width='100' placeholder='레이어 이름'></input>
+                <button type='button' onclick='make()'>생성</button>
+            </p>
+        </span>
+        <span>
+            <h2>레이어 조작</h2>
+            <p>
+                <select id='nameselect' width='100'>
+                    <option>없음</option>
+                </select>
+                <button type='button' onclick='show()'>보이기</button>
+                <button type='button' onclick='hide()'>숨기기</button>
+                <button type='button' onclick='window.__LayerMng.hide()'>아무거나 숨기기</button>
+            </p>
+        </span>
+    </div>
+
+    <div id='items'>
+        <div id='layer1'></div>
+        <div id='layer2'></div>
+    </div>
+</body>
+</html>
