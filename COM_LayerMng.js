@@ -98,15 +98,15 @@ window['__LayerMng'] = {
         _dom : {},
         _opt : {},
         _confirm : function(){ 
-            if(window['__LayerMng']._util.isNotFunction(this._opt['confirm'])){
+            if(window['__LayerMng']._util.isNotFunction(this._opt['confirm']['func'])){
                 throw '확인 버튼을 눌렀을때 실행될 함수가 없습니다'
             }
-            this._opt['confirm']();
+            this._opt['confirm']['func']();
             this.hide();
         },
         _cancel : function(){ 
-            if(!window['__LayerMng']._util.isNotFunction(this._opt['cancel'])){
-                this._opt['cancel']();
+            if(!window['__LayerMng']._util.isNotFunction(this._opt['cancel']['func'])){
+                this._opt['cancel']['func']();
             }
             this.hide();
         },
@@ -120,11 +120,11 @@ window['__LayerMng'] = {
             this._dom.find('[id*=_title]').text(this._opt.title);
             this._dom.find('[id*=_desc]').html(this._opt.content);
 
-            if(!window['__LayerMng']._util.isNullOrEmpty(this._opt['confirm_title'])){
-                this._dom.find('[id*=__LayerMng_confirm]').text(this._opt['confirm_title']);
+            if(!window['__LayerMng']._util.isNullOrEmpty(this._opt['confirm']['text'])){
+                this._dom.find('[id*=__LayerMng_confirm]').text(this._opt['confirm']['text']);
             }
-            if(!window['__LayerMng']._util.isNullOrEmpty(this._opt['cancel_title'])){
-                this._dom.find('[id*=__LayerMng_cancel]').text(this._opt['cancel_title']);
+            if(!window['__LayerMng']._util.isNullOrEmpty(this._opt['cancel']['text'])){
+                this._dom.find('[id*=__LayerMng_cancel]').text(this._opt['cancel']['text']);
             }
 
             if(this._opt.css){
@@ -211,9 +211,8 @@ window['__LayerMng'] = {
         if(this._util.isNullOrEmpty(opt['title'])){     throw '레이어 제목이 없습니다.' }
         if(this._util.isNullOrEmpty(opt['content'])){   throw '레이어 내용이 없습니다.'}
         if(this._util.isNullOrEmpty(opt['target'])){    throw '레이어 생성 대상이 없습니다.' }
-        //if(!opt['confirm']){ throw '확인 버튼 관련 객체가 없습니다.' }
-        //if(this._util.isNotFunction(opt['confirm']['func'])){ throw '확인 버튼 클릭시 실행될 함수가 없습니다.' }
-        if(this._util.isNotFunction(opt['confirm'])){   throw '확인 버튼 클릭시 실행될 함수가 없습니다.' }
+        if(!opt['confirm']){ throw '확인 버튼 관련 객체가 없습니다.' }
+        if(this._util.isNotFunction(opt['confirm']['func'])){ throw '확인 버튼 클릭시 실행될 함수가 없습니다.' }
         
         if(this._util.isNullOrEmpty(name)){ throw '레이어 이름이 없습니다.' }
 

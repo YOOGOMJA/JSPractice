@@ -33,60 +33,11 @@
     <script type='text/javascript' src="./com_layermng.js"></script>
     <link rel="stylesheet" type="text/css" href="http://192.168.0.14:2222/v3/inc/base.css">
     <script type='text/javascript'>
-        (function(){
-
-            window['__LayerMng'].init('layer1' , {
-                title : '레이어1번',
-                content : '테스트테스트 <br/> 테스트테스트<br/>테스트',
-                target : 'layer1',
-                confirm_title : '확인1',
-                cancel_title : '취소1',
-                onload : function(){ console.log("[layer1] loaded") },
-                confirm : function(){ console.log('[layer1] confirmed'); },
-                cancel : function(){ console.log('[layer1] denied') },
-                show : function(){ console.log('[layer1] show') },
-                hide : function(){ console.log('[layer1] hide') },
-                css : {
-                    "width" : "394px",
-                    "height" : "350px",
-                    "border" : "3px solid #42b7f6",
-                    "top"  : '50%',
-                    'left' : '50%',
-                    'margin-top' : '-175px',
-                    'margin-left' : '-197px',
-                    'position' : 'fixed'
-                }
-            });
-
-            window['__LayerMng'].init('layer2' , {
-                title : '레이어2번',
-                content : '테스트테스트 <br/> 테스트테스트<br/>테스트',
-                target : 'layer2',
-                confirm_title : '확인2',
-                cancel_title : '취소2',
-                onload : function(){ console.log("[layer2] loaded") },
-                confirm : function(){ console.log('[layer2] confirmed'); },
-                cancel : function(){ console.log('[layer2] denied') },
-                show : function(){ console.log('[layer2] show') },
-                hide : function(){ console.log('[layer2] hide') },
-                css : {
-                    "width" : "394px",
-                    "height" : "350px",
-                    "border" : "3px solid #42b7f6",
-                    "top"  : '50%',
-                    'left' : '50%',
-                    'margin-top' : '-175px',
-                    'margin-left' : '-197px',
-                    'position' : 'fixed'
-                }
-            });
-        })();
-    </script>
-
-    <script type='text/javascript'>
-        function make(){
-            var _name = $('#name').val();
-
+        function make(nm){
+            var _name = '';
+            if(nm){ _name = nm  }
+            else{ _name = $('#name').val(); }
+            
             if(_name == ''){ alert('이름 없음'); return; }
             for(var i = 0 ; i < $('#nameselect').children().length ; i++){
                 if($('#nameselect').children()[i].innerText == _name){
@@ -100,27 +51,30 @@
             $(tmp).attr('id' ,_name);
             $('#items').append(tmp);
 
-
             window['__LayerMng'].init(_name , {
                 title : _name,
-                content : '',
+                content : '일정 시간 동안 홈페이지 이용이 확인되지 않아 <br>로그아웃 처리됩니다. <br><br>로그인 상태를 유지하시겠습니까?',
                 target : _name,
-                confirm_title : '확인',
-                cancel_title : '취소',
                 onload : function(){ console.log("["+_name+"] loaded") },
-                confirm : function(){ console.log('[' + _name +'] confirmed'); },
-                cancel : function(){ console.log('[' + _name + '] denied') },
+                confirm : {
+                    text : '확인',
+                    func : function(){ console.log('[' + _name +'] confirmed'); }
+                },
+                cancel : {
+                    text : '취소',
+                    func : function(){ console.log('['+ _name +'] denied'); }
+                },
                 show : function(){ console.log('[' +_name+ '] show') },
                 hide : function(){ console.log('['+ _name +'] hide') },
                 css : {
-                    /*"width" : "394px",
+                    "width" : "394px",
                     "height" : "350px",
                     "border" : "3px solid #42b7f6",
                     "top"  : '50%',
                     'left' : '50%',
                     'margin-top' : '-175px',
                     'margin-left' : '-197px',
-                    'position' : 'fixed'*/
+                    'position' : 'fixed'
                 }
             }, function(){ 
                 console.log('callback!!'); 
@@ -150,6 +104,11 @@
         $(window).ready(function(){
             init();
         })
+
+        make('layer1');
+        make('layer2');
+        make('layer3');
+        make('layer4');
         
     </script>
 </head>
