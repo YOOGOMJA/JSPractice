@@ -48,10 +48,9 @@
                         return;
                     }
                 }
-
+                
                 var tmp = document.createElement('div')
                 $(tmp).attr('id' ,_name);
-                
                 $('#items').append(tmp);
 
 
@@ -109,9 +108,7 @@
         }
 
         $(window).ready(function(){
-            init();
-
-                
+            
             make('layer1')
             make('layer2')
             make('layer3')

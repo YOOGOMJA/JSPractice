@@ -94,6 +94,7 @@
 
 window['__LayerMng'] = {
     _url : './layer_layout.html',
+    _html : '',
     _layers : {},
     _mockup : { 
         _name : "",
@@ -149,6 +150,7 @@ window['__LayerMng'] = {
             
             // document가 준비된 다음에 실행될 수 있으므로 해당함수 실행시 
             // document ready 함수로 감싸야
+            console.log(this._opt.target , this._dom)
             $("#" + this._opt.target).replaceWith(this._dom);
         },
         // _init : function(opt){
@@ -173,9 +175,11 @@ window['__LayerMng'] = {
         // },
         _init : function(opt){
             var self = this;
+            this._opt = opt;
+            this._dom = $(window['__LayerMng']._html)
+            this._generate();
             return $.Deferred(function(dfd){
-                self._opt = opt;
-                self._generate();
+                
                 if($.isFunction(self._opt[onload])){
                     self._opt['onload']()
                 }
@@ -247,6 +251,7 @@ window['__LayerMng'] = {
             $(document).ready(function(){
                 window['__LayerMng']._layers[name]._init(opt)
                 .done(function(){
+                    console.log('init complete')
                     dfd.resolve();
                 })
             })
@@ -255,4 +260,6 @@ window['__LayerMng'] = {
 }
 
 // html을 직접 텍스트로 만들어준다.
-window['__LayerMng']._mockup._dom = $('<div id="__LayerMng" class="session_1" style=" max-width:394px; height:350px; border:3px solid #42b7f6; background-color: #fff;"><h1 id="__LayerMng_title" style="width:200px; height:30px; text-align:center; margin:auto; margin-bottom:40px; margin-top:40px;color:#0cacff; font-size:2.5em; letter-spacing:-2px; padding-bottom:10px; border-bottom:1px solid #0cacff;">세션종료안내</h1><p id="__LayerMng_desc" style="font-size:1.2em; letter-spacing:-1px; text-align:center; margin-bottom:10%;">일정 시간 동안 홈페이지 이용이 확인되지 않아 <br/>로그아웃 처리됩니다. <br/><br/>로그인 상태를 유지하시겠습니까?</p><div class="session_bt" style="width:100%; height:30%;margin:auto"><div style="width:80%; height:50%; margin:auto; text-align:center "><div style="width:48%; height:52px; background-color:#d4d4d4; border-radius:60px; float:left; margin-right:4%"><a id="__LayerMng_cancel" href="#" style="width:100%; height:100%; text-align:center; line-height: 52px; margin:auto; display:block; font-size:1.1em; font-weight:bold;">취소</a></div><div style="width:48%; height:52px; background-color:#42b7f6; border-radius:60px; float:left;"><a id="__LayerMng_confirm" href="#" style="width:100%; height:100%; text-align:center; line-height: 52px; margin:auto; display:block; font-size:1.1em; font-weight:bold; color:#fff;">확인</a></div></div></div></div>')
+window['__LayerMng']._html = $('<div id="__LayerMng" class="session_1" style=" max-width:394px; height:350px; border:3px solid #42b7f6; background-color: #fff;"><h1 id="__LayerMng_title" style="width:200px; height:30px; text-align:center; margin:auto; margin-bottom:40px; margin-top:40px;color:#0cacff; font-size:2.5em; letter-spacing:-2px; padding-bottom:10px; border-bottom:1px solid #0cacff;">세션종료안내</h1><p id="__LayerMng_desc" style="font-size:1.2em; letter-spacing:-1px; text-align:center; margin-bottom:10%;">일정 시간 동안 홈페이지 이용이 확인되지 않아 <br/>로그아웃 처리됩니다. <br/><br/>로그인 상태를 유지하시겠습니까?</p><div class="session_bt" style="width:100%; height:30%;margin:auto"><div style="width:80%; height:50%; margin:auto; text-align:center "><div style="width:48%; height:52px; background-color:#d4d4d4; border-radius:60px; float:left; margin-right:4%"><a id="__LayerMng_cancel" href="#" style="width:100%; height:100%; text-align:center; line-height: 52px; margin:auto; display:block; font-size:1.1em; font-weight:bold;">취소</a></div><div style="width:48%; height:52px; background-color:#42b7f6; border-radius:60px; float:left;"><a id="__LayerMng_confirm" href="#" style="width:100%; height:100%; text-align:center; line-height: 52px; margin:auto; display:block; font-size:1.1em; font-weight:bold; color:#fff;">확인</a></div></div></div></div>')
+// html 구조 확인
+//console.log(window['__LayerMng']._mockup._dom)
