@@ -236,7 +236,7 @@ window['__LayerMng'] = {
             $(document).ready(function(){
                 window['__LayerMng']._layers[name]._init(opt)
                 .done(function(){
-                    dfd.resolve('hi');
+                    dfd.resolve();
                 })
             })
         })
