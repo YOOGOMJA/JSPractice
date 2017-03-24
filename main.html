@@ -36,56 +36,58 @@
     <link rel="stylesheet" type="text/css" href="http://192.168.0.14:2222/v3/inc/base.css">
     <script type='text/javascript'>
         function make(nm){
-            var _name = '';
-            if(nm){ _name = nm  }
-            else{ _name = $('#name').val(); }
-            
-            if(_name == ''){ alert('이름 없음'); return; }
-            for(var i = 0 ; i < $('#nameselect').children().length ; i++){
-                if($('#nameselect').children()[i].innerText == _name){
-                    alert('이미 존재하는 이름');
+                var _name = '';
+                if(nm){ _name = nm  }
+                else{ _name = $('#name').val(); }
+                
+                if(_name == ''){ alert('이름 없음'); return; }
+                for(var i = 0 ; i < $('#nameselect').children().length ; i++){
+                    if($('#nameselect').children()[i].innerText == _name){
+                        alert('이미 존재하는 이름');
+                        $('#name').val('')
+                        return;
+                    }
+                }
+
+                var tmp = document.createElement('div')
+                $(tmp).attr('id' ,_name);
+                
+                $('#items').append(tmp);
+
+
+                window['__LayerMng'].init(_name , {
+                    title : _name,
+                    content : '일정 시간 동안 홈페이지 이용이 확인되지 않아 <br>로그아웃 처리됩니다. <br><br>로그인 상태를 유지하시겠습니까?',
+                    target : _name,
+                    onload : function(){ console.log("["+_name+"] loaded") },
+                    confirm : {
+                        text : '확인',
+                        func : function(){ console.log('[' + _name +'] confirmed'); }
+                    },
+                    cancel : {
+                        text : '취소',
+                        func : function(){ console.log('['+ _name +'] denied'); }
+                    },
+                    show : function(){ console.log('[' +_name+ '] show') },
+                    hide : function(){ console.log('['+ _name +'] hide') },
+                    css : {
+                        "width" : "394px",
+                        "height" : "350px",
+                        "border" : "3px solid #42b7f6",
+                        "top"  : '50%',
+                        'left' : '50%',
+                        'margin-top' : '-175px',
+                        'margin-left' : '-197px',
+                        'position' : 'fixed'
+                    }
+                })
+                .done(function(){   
+                    _ts.stamp('['+ _name +']layer init complete');
+                    init();
                     $('#name').val('')
-                    return;
-                }
-            }
-
-            var tmp = document.createElement('div')
-            $(tmp).attr('id' ,_name);
-            $('#items').append(tmp);
-
-            _ts.stamp('['+ _name +']layer initialize begin');
-            window['__LayerMng'].init(_name , {
-                title : _name,
-                content : '일정 시간 동안 홈페이지 이용이 확인되지 않아 <br>로그아웃 처리됩니다. <br><br>로그인 상태를 유지하시겠습니까?',
-                target : _name,
-                onload : function(){ console.log("["+_name+"] loaded") },
-                confirm : {
-                    text : '확인',
-                    func : function(){ console.log('[' + _name +'] confirmed'); }
-                },
-                cancel : {
-                    text : '취소',
-                    func : function(){ console.log('['+ _name +'] denied'); }
-                },
-                show : function(){ console.log('[' +_name+ '] show') },
-                hide : function(){ console.log('['+ _name +'] hide') },
-                css : {
-                    "width" : "394px",
-                    "height" : "350px",
-                    "border" : "3px solid #42b7f6",
-                    "top"  : '50%',
-                    'left' : '50%',
-                    'margin-top' : '-175px',
-                    'margin-left' : '-197px',
-                    'position' : 'fixed'
-                }
-            }, function(){ 
-                console.log('callback');
-                _ts.stamp('['+ _name +']layer init complete');
-                init();
-                $('#name').val('')
-            })
-            
+                })
+                .fail(function(result){ console.log(result) })
+                
         }
 
         function init(){
@@ -108,12 +110,15 @@
 
         $(window).ready(function(){
             init();
-        })
 
-        make('layer1');
-        make('layer2');
-        make('layer3');
-        make('layer4');
+                
+            make('layer1')
+            make('layer3')
+            make('layer3')
+            make('layer4')
+        })
+        
+        
         
     </script>
 </head>
@@ -146,8 +151,6 @@
     </div>
 
     <div id='items'>
-        <div id='layer1'></div>
-        <div id='layer2'></div>
     </div>
 </body>
 </html>

@@ -12,15 +12,15 @@
 //  1) div / span 등 임의의 타입으로 html element를 원하는 
 //     위치에 작성 후 id 값을 줌 (target으로 사용됨)
 // 2. js
-//  1) window['__LayerMng'].init(name , opt, callback) 함수로 레이어를 
-//     초기화 (option 명세 참고)
+//  1) window['__LayerMng'].init(name , opt) 함수로 레이어를 
+//     초기화, promise객체를 리턴한다. (option 명세 참고)
 //  2) window['__LayerMng'].show(name) 함수로 레이어 출력
 
 // ######################################
 // 함수 명세 
 // ######################################
 // window['__LayerMng']
-// .init(name , opt, callback)  : 레이어를 초기화 callback에 함수를 넘겨 초기화 후 함수 실행
+// .init(name , opt)            : 레이어를 초기화, promise객체를 리턴한다.
 // .show(name)                  : 레이어를 출력
 // .hide(name)                  : 레이어를 숨김 처리 
 // .getObj(name)                : 해당 레이어의 객체를 가져옴
@@ -76,10 +76,9 @@
             'margin-left' : '-197px',
             'position' : 'fixed'
         }
-    }, function(obj , ajax){
-        // CALLBACK FUNC
-        console.log('CALLBACK!!!');
-        console.log(obj , ajax);
+    })
+    .then(function(){
+        console.log('레이어 만들기 종료 !!!');
     });
 
     // 보여주기
@@ -103,7 +102,7 @@ window['__LayerMng'] = {
         _opt : {},
         _confirm : function(){ 
             if(!$.isFunction(this._opt['confirm']['func'])){
-                throw '확인 버튼을 눌렀을때 실행될 함수가 없습니다'
+                throw new Error('확인 버튼을 눌렀을때 실행될 함수가 없습니다') 
             }
             this._opt['confirm']['func']();
             this.hide();
@@ -115,9 +114,11 @@ window['__LayerMng'] = {
             this.hide();
         },
         _generate : function(){
-            if($.isBlank(this._opt['target'])){ throw '대상 객체의 아이디가 없습니다' }
-            if($.isBlank(this._opt['title'])){ throw '대상 객체의 아이디가 없습니다' }
-            if($.isBlank(this._opt['content'])){ throw '레이어 내용이 공백입니다' }
+            if($.isBlank(this._opt['target'])){ throw new Error('대상 객체의 아이디가 없습니다') }
+            if($.isBlank(this._opt['title'])){ throw new Error('대상 객체의 아이디가 없습니다') }
+            if($.isBlank(this._opt['content'])){ throw new Error('레이어 내용이 공백입니다') }
+
+            if(!$('#' + this._opt['target']).length){ throw new Error('대상 객체가 없습니다.') }
 
             this._dom.hide();
             
@@ -159,13 +160,13 @@ window['__LayerMng'] = {
             .done(function(dom){
                 this._dom = $(dom);
                 this._generate();
-
+                
                 if($.isFunction(this._opt['onload'])){
                     this._opt['onload']();
                 }
             })
             .fail(function(){
-                throw '레이아웃 html 파일의 위치를 확인해주세요 : [' + window['__LayerMng']._url + "]";
+                throw new Error('레이아웃 html 파일의 위치를 확인해주세요 : [' + window['__LayerMng']._url + "]");
             });
 
             return this._ajax;
@@ -212,26 +213,33 @@ window['__LayerMng'] = {
         
     },
     init : function(name , opt , callback){
-        if($.isBlank(opt['title'])){     throw '레이어 제목이 없습니다.' }
-        if($.isBlank(opt['content'])){   throw '레이어 내용이 없습니다.'}
-        if($.isBlank(opt['target'])){    throw '레이어 생성 대상이 없습니다.' }
-        if($.isEmptyObject(opt['confirm'])){ throw '확인 버튼 관련 객체가 없습니다.' }
-        if(!$.isFunction(opt['confirm']['func'])){ throw '확인 버튼 클릭시 실행될 함수가 없습니다.' }
+        if($.isBlank(opt['title'])){     throw new Error('레이어 제목이 없습니다.') }
+        if($.isBlank(opt['content'])){   throw new Error('레이어 내용이 없습니다.') }
+        if($.isBlank(opt['target'])){    throw new Error('레이어 생성 대상이 없습니다.') }
+        if($.isEmptyObject(opt['confirm'])){ throw new Error('확인 버튼 관련 객체가 없습니다.') }
+        if(!$.isFunction(opt['confirm']['func'])){ throw new Error('확인 버튼 클릭시 실행될 함수가 없습니다.') }
         
-        if($.isBlank(name)){ throw '레이어 이름이 없습니다.' }
+        if($.isBlank(name)){ throw new Error('레이어 이름이 없습니다.') }
+
+        for(key in this._layers){ 
+            if(key == name){
+                throw new Error('이미 존재하는 레이어 이름입니다.')
+            } 
+        }
 
         // 내용을 참조하지 않고 복사함
         this._layers[name] = jQuery.extend({} , window['__LayerMng']._mockup);
         this._layers[name]._name = name;
-        $(document).ready(function(){
-            window['__LayerMng']._layers[name]._init(opt)
-            .then(function(){
-                if($.isFunction(callback)){
-                    callback(this , this._ajax);
-                }
-            });
-            
-        });
+
+        return $.Deferred(function(dfd){
+            //var self = this;
+            $(document).ready(function(){
+                window['__LayerMng']._layers[name]._init(opt)
+                .done(function(){
+                    dfd.resolve('hi');
+                })
+            })
+        })
     }
 }
 
