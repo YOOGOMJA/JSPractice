@@ -87,9 +87,9 @@
 
 // 내부용 isblank함수 추가 
 (function($){
-  $.isBlank = function(obj){
-    return(!obj || $.trim(obj) === "");
-  };  
+    $.isBlank = function(obj){
+        return(!obj || $.trim(obj) === "");
+    };  
 })(jQuery);
 
 window['__LayerMng'] = {
@@ -150,29 +150,8 @@ window['__LayerMng'] = {
             
             // document가 준비된 다음에 실행될 수 있으므로 해당함수 실행시 
             // document ready 함수로 감싸야
-            console.log(this._opt.target , this._dom)
             $("#" + this._opt.target).replaceWith(this._dom);
         },
-        // _init : function(opt){
-        //     this._opt = opt;
-        //     this._ajax = $.get({
-        //         url : window['__LayerMng']._url,
-        //         context : this
-        //     })
-        //     .done(function(dom){
-        //         this._dom = $(dom);
-        //         this._generate();
-                
-        //         if($.isFunction(this._opt['onload'])){
-        //             this._opt['onload']();
-        //         }
-        //     })
-        //     .fail(function(){
-        //         throw new Error('레이아웃 html 파일의 위치를 확인해주세요 : [' + window['__LayerMng']._url + "]");
-        //     });
-
-        //     return this._ajax;
-        // },
         _init : function(opt){
             // ajax 로드 없도록 새로 작성             
             this._opt = opt;
@@ -239,13 +218,12 @@ window['__LayerMng'] = {
         }
 
         // 내용을 참조하지 않고 복사함
-        this._layers[name] = jQuery.extend({} , window['__LayerMng']._mockup);
+        this._layers[name] = jQuery.extend({} , this._mockup);
         this._layers[name]._name = name;
-
+        var self = this;
         return $.Deferred(function(dfd){
-            //var self = this;
             $(document).ready(function(){
-                window['__LayerMng']._layers[name]._init(opt);
+                self._layers[name]._init(opt);
                 dfd.resolve();
             })
         })

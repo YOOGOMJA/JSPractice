@@ -81,7 +81,7 @@
                     }
                 })
                 .done(function(){   
-                    _ts.stamp('['+ _name +']layer init complete');
+                    //_ts.stamp('['+ _name +']layer init complete');
                     init();
                     $('#name').val('')
                 })
@@ -108,12 +108,12 @@
         }
 
         $(window).ready(function(){
-            
+            _ts.stamp('레이어 생성 시작')
             make('layer1')
             .then(make('layer2'))
             .then(make('layer3'))
             .then(make('layer4'))
-            
+            .done(function(){ _ts.stamp('레이어 생성 종료 ') })
         })
         
         
