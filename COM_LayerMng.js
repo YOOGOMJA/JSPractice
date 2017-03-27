@@ -94,23 +94,23 @@
 
 window['__LayerMng'] = {
     _url : './layer_layout.html',
-    _html : '',
+    _html : '<div id="__LayerMng" class="session_1" style=" max-width:394px; height:350px; border:3px solid #42b7f6; background-color: #fff;"><h1 id="__LayerMng_title" style="width:200px; height:30px; text-align:center; margin:auto; margin-bottom:40px; margin-top:40px;color:#0cacff; font-size:2.5em; letter-spacing:-2px; padding-bottom:10px; border-bottom:1px solid #0cacff;">세션종료안내</h1><p id="__LayerMng_desc" style="font-size:1.2em; letter-spacing:-1px; text-align:center; margin-bottom:10%;">일정 시간 동안 홈페이지 이용이 확인되지 않아 <br/>로그아웃 처리됩니다. <br/><br/>로그인 상태를 유지하시겠습니까?</p><div class="session_bt" style="width:100%; height:30%;margin:auto"><div style="width:80%; height:50%; margin:auto; text-align:center "><div style="width:48%; height:52px; background-color:#d4d4d4; border-radius:60px; float:left; margin-right:4%"><a id="__LayerMng_cancel" href="#" style="width:100%; height:100%; text-align:center; line-height: 52px; margin:auto; display:block; font-size:1.1em; font-weight:bold;">취소</a></div><div style="width:48%; height:52px; background-color:#42b7f6; border-radius:60px; float:left;"><a id="__LayerMng_confirm" href="#" style="width:100%; height:100%; text-align:center; line-height: 52px; margin:auto; display:block; font-size:1.1em; font-weight:bold; color:#fff;">확인</a></div></div></div></div>',
     _layers : {},
     _mockup : { 
         _name : "",
-        _ajax : {},
+        // _ajax : {},
         _dom : {},
         _opt : {},
         _confirm : function(){ 
             if(!$.isFunction(this._opt['confirm']['func'])){
                 throw new Error('확인 버튼을 눌렀을때 실행될 함수가 없습니다') 
             }
-            this._opt['confirm']['func']();
+            this._opt['confirm']['func'].call();
             this.hide();
         },
         _cancel : function(){ 
             if($.isFunction(this._opt['cancel']['func'])){
-                this._opt['cancel']['func']();
+                this._opt['cancel']['func'].call();
             }
             this.hide();
         },
@@ -174,22 +174,18 @@ window['__LayerMng'] = {
         //     return this._ajax;
         // },
         _init : function(opt){
-            var self = this;
+            // ajax 로드 없도록 새로 작성             
             this._opt = opt;
-            this._dom = $(window['__LayerMng']._html)
+            this._dom = $(window['__LayerMng']._html).clone();
             this._generate();
-            return $.Deferred(function(dfd){
-                
-                if($.isFunction(self._opt[onload])){
-                    self._opt['onload']()
-                }
-                dfd.resolve();
-            })
+            if($.isFunction(this._opt['onload'])){
+                this._opt['onload'].call();
+            }
         },
         show : function(){ 
             if(this._dom.is(":visible")){ console.log('['+ this._name +'] 레이어는 이미 열려있습니다'); return; }
             if($.isFunction(this._opt['show'])){
-                this._opt['show']();
+                this._opt['show'].call();
             }
             
             this._dom.show(); 
@@ -197,7 +193,7 @@ window['__LayerMng'] = {
         hide : function(){ 
             if(!this._dom.is(":visible")){ console.log('['+ this._name +'] 레이어는 이미 닫혀있습니다'); return; }
             if($.isFunction(this._opt['hide'])){
-                this._opt['hide']();
+                this._opt['hide'].call();
             }
             this._dom.hide(); 
         }
@@ -249,11 +245,8 @@ window['__LayerMng'] = {
         return $.Deferred(function(dfd){
             //var self = this;
             $(document).ready(function(){
-                window['__LayerMng']._layers[name]._init(opt)
-                .done(function(){
-                    console.log('init complete')
-                    dfd.resolve();
-                })
+                window['__LayerMng']._layers[name]._init(opt);
+                dfd.resolve();
             })
         })
     }

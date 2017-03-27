@@ -54,7 +54,7 @@
                 $('#items').append(tmp);
 
 
-                window['__LayerMng'].init(_name , {
+                return window['__LayerMng'].init(_name , {
                     title : _name,
                     content : '일정 시간 동안 홈페이지 이용이 확인되지 않아 <br>로그아웃 처리됩니다. <br><br>로그인 상태를 유지하시겠습니까?',
                     target : _name,
@@ -110,9 +110,10 @@
         $(window).ready(function(){
             
             make('layer1')
-            make('layer2')
-            make('layer3')
-            make('layer4')
+            .then(make('layer2'))
+            .then(make('layer3'))
+            .then(make('layer4'))
+            
         })
         
         
